@@ -1,4 +1,7 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../app.reducers';
+import { MultiplicarAction, DividirAction } from '../contador.actions';
 
 @Component({
   selector: 'app-hijo',
@@ -8,27 +11,34 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 })
 export class HijoComponent implements OnInit {
 
-  @Input() contador: number;
-  @Output() cambioContador = new EventEmitter<number>();
+  contador: number;
 
-  constructor() { }
+  constructor(private store: Store<AppState>) { }
 
   ngOnInit(): void {
+    this.store.select('contador')
+      .subscribe(contador => {
+        this.contador = contador;
+      });
   }
 
   multiplicar() {
-    this.contador *= 2;
-    this.cambioContador.emit(this.contador);
+    const accion = new MultiplicarAction(5);
+    this.store.dispatch(accion);
+    // this.contador *= 2;
+    // this.cambioContador.emit(this.contador);
   }
 
   dividir() {
-    this.contador /= 2;
-    this.cambioContador.emit(this.contador);
+    const accion = new DividirAction(2);
+    this.store.dispatch(accion);
+    // this.contador /= 2;
+    // this.cambioContador.emit(this.contador);
   }
 
   resetNieto(numero) {
     this.contador = 0;
-    this.cambioContador.emit(this.contador);
+    // this.cambioContador.emit(this.contador);
   }
 
 }
